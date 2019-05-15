@@ -1,4 +1,4 @@
-﻿// Ivan's Workshop
+// Ivan's Workshop
 
 var CATEGORY_HIERARCHY = function () {
 	var ret = {};
@@ -766,20 +766,36 @@ function searchResult(){
 		for (var i in clothes){
 			if(clothes[i].isSuit.indexOf(searchTxt)>=0) {outSet.push(clothes[i].isSuit);}
 		}
-		if (outSet.length>0) {
-			outSet=getDistinct(outSet);
-			$('#searchResultList').append(button_search('套装：','searchCate'));
-			for (var i in outSet) {$('#searchResultList').append(button_search(outSet[i],'','searchResultSet'));}
-			$(".searchResultSet").click(function () {
-				switchCate(0);
-				var setName=$(this).attr('id').replace('search-','');
-				$('#searchResultList').append(button_search(setName+'：','searchCate'));
+		if($("#importCate").val()==""){
+			if (outSet.length>0) {
+				outSet=getDistinct(outSet);
+				$('#searchResultList').append(button_search('套装：','searchCate'));
+				for (var i in outSet) {$('#searchResultList').append(button_search(outSet[i],'','searchResultSet'));}
+				$(".searchResultSet").click(function () {
+					switchCate(0);
+					var setName=$(this).attr('id').replace('search-','');
+					$('#searchResultList').append(button_search(setName+'：','searchCate'));
+					for (var i in clothes){
+						if(clothes[i].isSuit==setName) {$('#searchResultList').append(clothesNameTd_Search(clothes[i]));}
+					}
+				});
+			}
+			for (var h in CATEGORY_HIERARCHY){
+				var outCate=[];
 				for (var i in clothes){
-					if(clothes[i].isSuit==setName) {$('#searchResultList').append(clothesNameTd_Search(clothes[i]));}
+					if (clothes[i].type.mainType==h&&clothes[i].name.indexOf(searchTxt)>=0){
+						outCate.push(clothesNameTd_Search(clothes[i]));
+					}
 				}
-			});
-		}
-		for (var h in CATEGORY_HIERARCHY){
+				if (outCate.length>0){
+					$('#searchResultList').append(button_search(h+'：','searchCate'));
+					for (var i in outCate){
+						$('#searchResultList').append(outCate[i]);
+					}
+				}
+			}
+		}else{
+			var h=$("#importCate").val();
 			var outCate=[];
 			for (var i in clothes){
 				if (clothes[i].type.mainType==h&&clothes[i].name.indexOf(searchTxt)>=0){
