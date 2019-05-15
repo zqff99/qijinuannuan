@@ -162,10 +162,12 @@ function clothesNameTd_Search(piece) {
 			shoppingCart.put(clothesSet[piece.type.mainType][piece.id]);
 			refreshShoppingCart();
 			$('#searchResultInput').focus();
+			$('#searchResultInput').select();
 			return false;
 		}else{
 			toggleInventory(piece.type.mainType, piece.id, this);
 			$('#searchResultInput').focus();
+			$('#searchResultInput').select();
 			return false;
 		}
 	});
