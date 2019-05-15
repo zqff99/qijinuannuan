@@ -161,9 +161,11 @@ function clothesNameTd_Search(piece) {
 		if ($('#searchResultMode').hasClass("active")){
 			shoppingCart.put(clothesSet[piece.type.mainType][piece.id]);
 			refreshShoppingCart();
+			$('#searchResultInput').focus();
 			return false;
 		}else{
 			toggleInventory(piece.type.mainType, piece.id, this);
+			$('#searchResultInput').focus();
 			return false;
 		}
 	});
