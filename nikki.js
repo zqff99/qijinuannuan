@@ -33,6 +33,7 @@ function toggleInventory(type, id) {
 	checked ? $('#clickable-' + type + id).addClass('own') : $('#clickable-' + type + id).removeClass("own");
 	clothesSet[type][id].own = checked;
 	saveAndUpdate();
+	document.getElementById("theme").focus();
 }
 
 var criteria = {};
