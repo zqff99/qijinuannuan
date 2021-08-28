@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
-<title>个人中心推广页面</title>
+<title>夺宝推广页面</title>
 <style type="text/css">
 <!--
 body {
@@ -17,7 +17,7 @@ body {
 	text-align:center;
 }
 #container1 {
-	font-size:14px;
+	font-size:12px;
 }
 
 a img {
@@ -27,21 +27,36 @@ a img {
 .midd{margin-left:30px;}
 .rightd{margin-left:30px;}
 .qshow,.vshow,.kshow{color:blue}
-.xzsd,.mj{color:red}
-#cotxt{width:100px;border:0px;color:#FFFFFF;position:absolute;margin-top:-500px;margin-left:0px;};
+.xzsd,.mj,.mj22{color:blue}
+#cotxt{width:100px;border:0px;color:#FFFFFF;position:absolute;margin-top:-500px;margin-left:0px;}
+.divsshow{font-size:9px;}
 -->
 </style>
 </head>
 <body>
 <div id="container1">
-<span class='vshow'>请使用上方按钮进行操作</span>
+<!--
+合作联系：<span class='qshow'>80254588</span>，粮票招主播回收礼物：<span class='mj'>17301780549</span>--><!--收售礼物头条联系：<span class='kshow'>3082363353</span>
+粮票回收皇帝公爵夺宝金卡礼物：<span class='mj'>17301780549</span>
+&nbsp;&nbsp;-->
+高价收礼物秒结VX：<span class='kshow'>wxc097</span> 8.28更新：我的-夺宝页面，新增卡时间点夺宝(可自定义)
 <br/>
+<!--高价收礼物头条小钟：<span class='mj22'>15925800165</span>&nbsp;
 
-<!--<br/>
-交流QQ群：<span class='vshow'>602014298</span>
-&nbsp;&nbsp;
+收货微信：<span class='kshow'>19150606354</span>-->
+
+<!--
+乌龟24小时在线高价收礼物商务合作帮打周星班级优惠充值加VX:<span class='mj22'>qq83095239</span>&nbsp;&nbsp;-->
+连击时间标签可以重置夺宝数据
+<!--交流QQ群：<span class='kshow'>602014298</span>-->
+
+<br/><!--
+<a href="http://d0kpx6.coding-pages.com/egamePan3.4.8.apk" target="_blank" rel="noreferrer">点此下载更新</a>
+-->
+<!--
+<div class='divsshow'>
 想玩游戏聊天来<span class='xzsd'>心之所动</span>
-找<span class='mj'>猫久</span>，欢迎大家捧场！-->
+找<span class='mj'>猫久</span>，欢迎大家捧场！</div>-->
 </div>
 <input id="cotxt" />
 <script type="text/javascript">
@@ -66,6 +81,15 @@ $(".xzsd").click(function (){
 	document.documentElement.scrollTop = 0;
 	alert("已复制心之房动间号码：5605258");
 });
+$(".vshow").click(function (){
+	$("#cotxt").val($(".vshow").html());
+    $("#cotxt").focus();
+	$("#cotxt").select();
+	document.execCommand("Copy");
+	document.body.scrollTop=0;
+	document.documentElement.scrollTop = 0;
+	alert("已复制网盘地址："+$(".vshow").html());
+});
 $(".kshow").click(function (){
 	$("#cotxt").val($(".kshow").html());
     $("#cotxt").focus();
@@ -73,7 +97,7 @@ $(".kshow").click(function (){
 	document.execCommand("Copy");
 	document.body.scrollTop=0;
 	document.documentElement.scrollTop = 0;
-	alert("已复制QQ号码："+$(".kshow").html());
+	alert("已复制微信号码："+$(".kshow").html());
 });
 $(".mj").click(function (){
 	$("#cotxt").val($(".mj").html());
@@ -83,6 +107,15 @@ $(".mj").click(function (){
 	document.body.scrollTop=0;
 	document.documentElement.scrollTop = 0;
 	alert("已复制微信号码："+$(".mj").html());
+});
+$(".mj22").click(function (){
+	$("#cotxt").val($(".mj22").html());
+    $("#cotxt").focus();
+	$("#cotxt").select();
+	document.execCommand("Copy");
+	document.body.scrollTop=0;
+	document.documentElement.scrollTop = 0;
+	alert("已复制微信号码："+$(".mj22").html());
 });
 
 </script>
