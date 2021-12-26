@@ -1,6 +1,8 @@
  //https://play.farmersworld.io/static/js/api/farmersworld.js
+ //修改原文件内容有account_info，req_this，zq_diy_servers, select_server共4个参数，select_server内容需要根据req_api中的提示进行修改，否则无法使用
  var req_this = {}, account_info = {}, auto_clock = 0;
- var farm_account = "4q4jc.wam";
+ var zq_diy_servers = ["https://wax.cryptolions.io", "https://api.wax.alohaeos.com", "https://wax.greymass.com", "https://api.waxsweden.org", "https://wax.pink.gg", "https://wax.dapplica.io", "https://wax.eosphere.io", "https://api.wax.greeneosio.com"];
+ var select_server = "", error_req_count = 0;
  var prize_obj = {
      "WOOD": {
          "shouyi": 0,
@@ -102,23 +104,34 @@
   })
   */
   var user_name_select_zq = '<select id="zq_select_user_addr">' +
-  "<option value='4q4jc.wam'>大号4q4jc.wam,种玉米</option>" +
-  "<option value='bjpje.wam'>bjpje.wam,种大麦</option>" +
-  "<option value='25hzu.wam'>25hzu.wam,种玉米</option>" +
-  "<option value='azxzw.wam'>azxzw.wam,种大麦</option>" +
-  "<option value='jnxzw.wam'>jnxzw.wam,种大麦</option>" +
-  "<option value='.mgk2.c.wam'>.mgk2.c.wam,种玉米</option>" +
-  "<option value='xhgk2.c.wam'>xhgk2.c.wam,种玉米</option>" +
-  "<option value='z1fka.c.wam'>z1fka.c.wam,种玉米</option>" +
-  "<option value='3tgka.c.wam'>3tgka.c.wam,种玉米</option>" +
-  "<option value='mhgka.c.wam'>mhgka.c.wam,种玉米</option>" +
-  "<option value='p4vkc.c.wam'>p4vkc.c.wam,种玉米</option>" +
-  "<option value='ii5.c.c.wam'>ii5.c.c.wam,种玉米</option>" +
-  "<option value='wyx.e.c.wam'>wyx.e.c.wam,种玉米</option>" +
-  "<option value='lu3kg.c.wam'>lu3kg.c.wam,种玉米</option>" +
-  "<option value='xe4kg.c.wam'>xe4kg.c.wam,种玉米</option>" +
+  "<option value='4q4jc.wam'>1----大号4q4jc.wam,种玉米</option>" +
+  "<option value='xhgk2.c.wam'>2----xhgk2.c.wam,种玉米</option>" +
+  "<option value='.mgk2.c.wam'>3----.mgk2.c.wam,种玉米</option>" +
+  "<option value='azxzw.wam'>4----azxzw.wam,种大麦</option>" +
+  "<option value='3tgka.c.wam'>5----3tgka.c.wam,种玉米</option>" +
+  "<option value='z1fka.c.wam'>6----z1fka.c.wam,种玉米</option>" +
+  "<option value='mhgka.c.wam'>7----mhgka.c.wam,种玉米</option>" +
+  "<option value='jnxzw.wam'>8----jnxzw.wam,种大麦</option>" +
+  "<option value='bjpje.wam'>9----bjpje.wam,种大麦</option>" +
+  "<option value='p4vkc.c.wam'>10---p4vkc.c.wam,种玉米</option>" +
+  "<option value='ii5.c.c.wam'>11---ii5.c.c.wam,种玉米</option>" +
+  "<option value='25hzu.wam'>12---25hzu.wam,种玉米</option>" +
+  "<option value='wyx.e.c.wam'>13---wyx.e.c.wam,种玉米</option>" +
+  "<option value='xe4kg.c.wam'>14---xe4kg.c.wam,种玉米</option>" +
+  "<option value='lu3kg.c.wam'>15---lu3kg.c.wam,种玉米</option>" +
+  "<option value='4a5.g.c.wam'>16---4a5.g.c.wam,种玉米</option>" +
+  "<option value='trgkg.c.wam'>17---trgkg.c.wam,种玉米</option>" +
   "<option value=''>----------------</option>" +
   "<option value='kvwzq.wam'>余钱账号</option>" +
+  "</select>";
+  var user_select_server = '<select id="user_select_server_addr">' +
+  "<option value='https://wax.cryptolions.io'>https://wax.cryptolions.io</option>" +
+  "<option value='https://wax.eosphere.io'>https://wax.eosphere.io</option>" +
+  "<option value='https://api.waxsweden.org'>https://api.waxsweden.org</option>" +
+  "<option value='https://wax.pink.gg'>https://wax.pink.gg</option>" +
+  "<option value='https://wax.dapplica.io'>https://wax.dapplica.io</option>" +
+  "<option value='https://api.wax.greeneosio.com'>https://api.wax.greeneosio.com</option>" +
+  "<option value='https://api.wax.alohaeos.com'>https://api.wax.alohaeos.com</option>" +
   "</select>";
  var call_fun_name = "<select id='call_fun_name'>" +
      "<option value='getWaxAccount'>获取资源使用情况</option>" +
@@ -231,7 +244,7 @@
      "scrollbar-track-color:#ece9d8;scrollbar-highlight-color:#800040;scrollbar-shadow-color:#800040;scrollbar-3dlight-color: #EB8;scrollbar-darkshadow-Color:#EB8;}" +
      ".msgAreaTabel_Div table.tbody{width:100%;border: 1px solid #C96;border-right:#B74;color:#666666;background: #ECE9D8;}" +
      ".msgAreaTabel_Div table.tbody td{border:1px solid #C96;}" +//表格处理完成
-     "tr:hover{background-color:#87CEFA;} td{word-wrap:break-word;word-break:break-all;}" +
+     "tr:hover{background-color:#87CEFA;} td{word-wrap:break-word;word-break:break-all;}" +//行样式
      ".table_desc{margin-left:15px;} .table_desc span{color:blue;}" +
      ".msg_userUid{width:100px;border:0px;color:#f00;margin-left:5px;}" +
      ".sendBtn{width:40px;} .getUserByAnchBtn,.setAnchRemark{width:40px;}" +
@@ -338,7 +351,7 @@
      "#zq_kuozhan_div{position:absolute;left:130px;top:26px;width:1000px;z-index:9999;padding:5px;background:#ecd0d7}" +
      ".zq_kuozhan_msg_area,.zq_kuozhan_other_area{display:inline-block;vertical-align:top;}" +
      ".resource_used_div{margin-left:5px;} .resource_used_div span font{margin-right:20px;} .zq_postion_div,.fun_menu_div{font-size:12px;}"+
-     ".zq_kuozhan_kuozhan_area{width:328px} .energy_low_limit,.repair_low_limit,.req_limit_count{width:60px}</style>" +
+     ".zq_kuozhan_kuozhan_area{width:328px;font-size:12px;} .energy_low_limit,.repair_low_limit,.req_limit_count,.fenhua_food_count,.receive_food_addr{width:60px}</style>" +
      "<div class='zq_postion_div'><input type='button' value='扩展功能' class='zq_kuozhan_area small blue button'/> <input type='button' value='扫描建筑' class='zq_check_build small blue button' /> " +
      "<input type='button' value='补充体力' class='zq_check_health small blue button' /> " + call_fun_name +
      "<input type='text' class='saveHistory' placeholder='调用的方法'> <input type='text' class='delHistory' placeholder='参数1'> " +
@@ -347,20 +360,25 @@
      "<input type='button' value='打开包裹' class='zq_open_items_table small purple button' /> <input type='button' value='强制登录' class='zq_login_wallet small blue button' /></div>" +
      "<div id='zq_kuozhan_div'><div><div class='zq_kuozhan_msg_area'><textarea id='zq_info_show' style='width:660px;height:80px;'></textarea></div>" +
      "<div class='zq_kuozhan_other_area'><div class='zq_kuozhan_kuozhan_area'>" +
-     "<div><input type='checkbox' checked class='map_check' value='tools'/><span>tools：</span> low_repair：<input type='text' class='repair_low_limit' value='0.1'/></div>" +
+     "<div><label>当前服务器：</label><span class='cur_server_addr'></span></div>" +
+     "<div>" + user_select_server + " <input type='button' class='zq_change_server small blue button' value='修改服务器'/></div>" +
+     "<hr><div><span>食物基数：</span><input type='text' class='fenhua_food_count' value='288' title='预设项，默认是大麦基数，玉米分发数量为基数的1.5倍'/> "+
+     "<input type='button' class='fenhua_food small blue button' value='分发食物'/> </div>" +
+     "<div><span>收货地址：</span><input type='text' class='receive_food_addr' value=''/> "+
+     "<input type='button' class='send_food_btn small blue button' value='发送食物'/> </div>" +
+     "<hr><div class='resource_used_div'><div><label>资源使用率</label> <input type='button' class='get_resource_used small blue button' value='获取'/> <input type='button' class='replace_item_btn small blue button' value='替换物品数据' title='将参数1的值替换为数据'/> </div>"+
+     "<div><label>CPU：</label><span class='zq_cpu_info'></span></div>" +
+     "<div><label>NET：</label><span class='zq_net_info'></span></div>" +
+     "<div><label>RAM：</label><span class='zq_ram_info'></span></div></div>" +
+     "<hr><div><input type='checkbox' checked class='map_check' value='tools'/><span>tools：</span> low_repair：<input type='text' class='repair_low_limit' value='0.1'/></div>" +
      "<div><input type='checkbox' checked class='map_check' value='crops'/><span>crops：</span> <input type='checkbox' checked class='map_check' value='auto_plot_crops'/>auto_crops</div>" +
      "<div><input type='checkbox' checked class='map_check' value='animals'/><span>animals：</span></div>" +
      "<div><input type='checkbox' class='map_check' value='buildings'/><span>buildings：</span></div>" +
-     "<div><input type='checkbox' checked class='map_check' value='mbs'/><span>member：</span></div>" +
-     "<div><input type='checkbox' checked class='map_check' value='config'/><span>fee：</span></div>" +
+     "<div><input type='checkbox' checked class='map_check' value='mbs'/><span>member：</span> <input type='checkbox' checked class='map_check' value='config'/><span>fee：</span></div>" +
      "<div><input type='checkbox' checked class='map_check' value='auto_check_Items'/><span>check_Items：</span></div>" +
      "<div><input type='checkbox' checked class='map_check' value='accounts'/><span>energy：</span><input type='text' class='energy_low_limit' value='240'/></div>" +
      "<div><input type='checkbox' checked class='req_limit_check'/><span>req_limit_count：</span><input type='text' class='req_limit_count' value='2'/></div>" +
      "<div><input type='checkbox' class='map_check' value='auto_add_food'/><span>自动存入FWF，大号勿用</span></div>" +
-     "<hr><div class='resource_used_div'><div><label>资源使用率</label> <input type='button' class='get_resource_used small blue button' value='获取'/> <input type='button' class='fenhua_food small blue button' value='分发食物'/> <input type='button' class='replace_item_btn small blue button' value='替换物品数据' title='将参数1的值替换为数据'/> </div>"+
-     "<div><label>CPU：</label><span class='zq_cpu_info'></span></div>" +
-     "<div><label>NET：</label><span class='zq_net_info'></span></div>" +
-     "<div><label>RAM：</label><span class='zq_ram_info'></span></div></div>" +
      "<hr></div><textarea id='zq_result_desc' style='width:328px;height:80px;'></textarea></div></div>" +
      "<div class='fun_menu_div'><span>时间：</span><input type='text' class='zq_start_pos' style='width:100px;' value='0' title='计时器开始变化时，意味着脚本在运行中'/> " +
      "<span>金币：</span><input type='text' class='zq_tran_gold' style='width:70px;' value='0'/> " +
@@ -381,6 +399,7 @@
     "animal" : 99999,
     "building" : 99999,
  };
+ var repeat_req = {};//限制重复请求
  var data_fun = {
      "show_text": function(astr) {
          $("#zq_result_text").val($("#zq_result_text").val() + get_time_format() + " " + astr + "\n");
@@ -502,7 +521,8 @@
          "mine": function(index) {
              if (data_fun.no_mine_list[account_info.tools[index].asset_id] == undefined) {
                 limit_req--;
-                if(limit_req>=0){
+                if(limit_req>=0 && repeat_req["mine" + account_info.tools[index].asset_id] == undefined){
+                    repeat_req["mine" + account_info.tools[index].asset_id] = new Date().getTime();
                     req_this.mine(account_info.tools[index].asset_id).then(function(res) {
                         //console.log("返回值",res)
                         //console.log("交易编号",res.transaction_id);//有正常交易编号则成功
@@ -531,7 +551,8 @@
          },
          "repair": function(index) {
             limit_req--;
-            if(limit_req>=0){
+            if(limit_req>=0 && repeat_req["repair" + account_info.tools[index].asset_id] == undefined){
+                repeat_req["repair" + account_info.tools[index].asset_id] = new Date().getTime();
                 req_this.repair(account_info.tools[index].asset_id).then(function(res) {
                     if (res.transaction_id != undefined && res.transaction_id != "") {
                         data_fun.show_text("#修复:" + data_fun.template_ids[account_info.tools[index].template_id].template_name + "[" + account_info.tools[index].asset_id + "]");
@@ -628,13 +649,15 @@
          },
          "claim_Building": function(index) {
             limit_req--;
-            if(limit_req>=0){
+            if(limit_req>=0 && repeat_req["claim_Building" + account_info.buildings[index].asset_id] == undefined){
+                repeat_req["claim_Building" + account_info.buildings[index].asset_id] = new Date().getTime();
                 req_this.claimBuilding(account_info.buildings[index].asset_id).then(function(res) {
                     if (res.transaction_id != undefined && res.transaction_id != "") {
-                        data_fun.show_text("#升级:" + account_info.buildings[index].name + "[" + account_info.buildings[index].asset_id + "] 完成次数：" + account_info.buildings[index].times_claimed);
                         setTimeout(function() {
-                            req_this.getUsingBuilding();
-                        }, 1000);
+                            req_this.getUsingBuilding().then(function(){
+                                data_fun.show_text("#升级:" + account_info.buildings[index].name + "[" + account_info.buildings[index].asset_id + "] 完成次数：" + account_info.buildings[index].times_claimed);
+                            });
+                        }, 2000);
                     } else {
                         req_this.getUsingBuilding();
                     }
@@ -667,7 +690,8 @@
          "water": function(index) {
              //data_fun.show_balance();
              limit_req--;
-            if(limit_req>=0){
+            if(limit_req>=0 && repeat_req["water" + account_info.crops[index].asset_id] == undefined){
+                repeat_req["water" + account_info.crops[index].asset_id] = new Date().getTime();
                 req_this.cropClaim(account_info.crops[index].asset_id).then(function(res) {
                     if (res.transaction_id != undefined && res.transaction_id != "") {
                         data_fun.show_text("#浇水:" + account_info.crops[index].name + "[" + account_info.crops[index].asset_id + "]");
@@ -777,7 +801,8 @@
                  //account_info.animals[index].consumed_card
                  //account_info.animals[index].consumed_quantity
                  limit_req--;
-                if(limit_req>=0){
+                if(limit_req>=0 && repeat_req["feed" + account_info.animals[index].asset_id] == undefined){
+                    repeat_req["feed" + account_info.animals[index].asset_id] = new Date().getTime();
                     building_items = feed_foods[Math.floor(Math.random()*(feed_foods.length))];
                     req_this.feedAnimal(account_info.animals[index].asset_id, building_items).then(function(res) {
                         if (res.transaction_id != undefined && res.transaction_id != "") {
@@ -793,7 +818,8 @@
          "care": function(index) {
              //data_fun.show_balance();
              limit_req--;
-            if(limit_req>=0){
+            if(limit_req>=0 && repeat_req["care" + account_info.animals[index].asset_id] == undefined){
+                repeat_req["care" + account_info.animals[index].asset_id] = new Date().getTime();
                 req_this.careAnimal(account_info.animals[index].asset_id).then(function(res) {
                     if (res.transaction_id != undefined && res.transaction_id != "") {
                         data_fun.show_text("#孵化:" + account_info.animals[index].name + "[" + account_info.animals[index].asset_id + "]");
@@ -889,7 +915,8 @@
          },
          "claim": function(index) {
             limit_req--;
-            if(limit_req>=0){
+            if(limit_req>=0 && repeat_req["claim" + account_info.mbs[index].asset_id] == undefined){
+                repeat_req["claim" + account_info.mbs[index].asset_id] = new Date().getTime();
                 req_this.mbsClaim(account_info.mbs[index].asset_id).then(function(res) {
                     if (res.transaction_id != undefined && res.transaction_id != "") {
                         data_fun.show_text("#使用会员:" + data_fun.template_ids[account_info.mbs[index].template_id].name + "[" + account_info.mbs[index].asset_id + "]");
@@ -958,13 +985,19 @@
                 data_fun.item_count_obj[account_info.itemsBySchema.schema_name] = account_info.itemsBySchema.result.length;
                  req_api.Items.list();
              }
+             error_req_count++;
+             if(error_req_count > 20){
+                req_api.change_server.auto_server();
+             }
              req_this.getPlayerInfo().then(function(res) {
+                error_req_count = 0;
                  load_account_data();
                  if (account_info.accounts[0].energy <= energy) {
                      var needfood = (account_info.accounts[0].max_energy - account_info.accounts[0].energy) / 5;
                      if (needfood > 0) {
                         limit_req--;
-                        if(limit_req >= -1){
+                        if(limit_req >= -1 && repeat_req["recover" + needfood] == undefined){
+                            repeat_req["recover" + needfood] = new Date().getTime();
                             req_this.recover(needfood).then(function(res) {
                                 if (res.transaction_id != undefined && res.transaction_id != "") {
                                     for (var i = 0; i < res.processed.action_traces.length; i++) {
@@ -981,7 +1014,7 @@
                          }
                      }
                  }
-             });
+             })
          }
      }, //账户信息，体力，余额等
      "config": {
@@ -995,6 +1028,21 @@
      "mktconf": function() {
          req_this.getMarketConf();
      }, //市场交易配置信息,marketBuy--mktbuy#template_id#quantity
+     "marketBuy" : function(e, a){
+        req_this.__transact([{
+            account: req_this.mainCollection,
+            name: "mktbuy",
+            authorization: [{
+                actor: req_this.name,
+                permission: "active"
+            }],
+            data: {
+                owner: req_this.name,
+                template_id: e,
+                quantity: a
+            }
+        }]).then(function(res){data_fun.show_text("买入template_id：" + e + "，" + a + "个 成功！");})
+     },
      "tokens": {
         "get_tokens_balance" : function(){
             req_this.getTokens().then(function(res){
@@ -1032,11 +1080,42 @@
         });
      },
      "withdraw" : function() {
+        function t_withdraw(e, a, t, n) {
+            var c = [{
+                name: "GOLD",
+                value: e
+            }, {
+                name: "FOOD",
+                value: a
+            }, {
+                name: "WOOD",
+                value: t
+            }].filter((function(e) {
+                return e.value > 0
+            }
+            )).map((function(e) {
+                return "".concat(parseFloat(e.value).toFixed(4), " ").concat(e.name)
+            }
+            ));
+            return [{
+                account: req_this.mainCollection,
+                name: "withdraw",
+                authorization: [{
+                    actor: req_this.name,
+                    permission: "active"
+                }],
+                data: {
+                    owner: req_this.name,
+                    quantities: c,
+                    fee: n
+                }
+            }]
+        }
         var zq_gold = parseFloat($(".zq_tran_gold").val());
         var zq_food = parseFloat($(".zq_tran_food").val());
         var zq_wood = parseFloat($(".zq_tran_wood").val());
         var zq_fee = parseInt($(".zq_tran_fee").val());
-         req_this.withdraw(zq_gold, zq_food, zq_wood, zq_fee).then(function(res) {
+        req_this.__transact(t_withdraw(zq_gold, zq_food, zq_wood, zq_fee)).then(function(res) {
              data_fun.show_text("------------转出成功，console中查看转出详情！-------------");
              console.log("转出结果：", res);
          });
@@ -1044,8 +1123,25 @@
      "itemconf": function() {
          req_this.getExchangeConf();
      }, //这里有传递一个值，可以交换资源的物品
-     "exchangeRewards": function(asset_ids) {
-         req_this.exchangeRewards(asset_ids);
+     "exchangeRewards": function(e, callback = null) {
+         req_this.__transact([{
+            account: "atomicassets",
+            name: "transfer",
+            authorization: [{
+                actor: req_this.name,
+                permission: "active"
+            }],
+            data: {
+                from: req_this.name,
+                to: req_this.mainCollection,
+                asset_ids: [e],
+                memo: "burn"
+            }
+        }]).then(function(e){
+            if(callback != null){
+                callback(e);
+            }
+        });
      }, //卖出
      "stake": {
          "wear": function(index) {
@@ -1097,7 +1193,18 @@
          }
      }, //wear
      "unstake": function(asset_id) {
-         req_this.unstake(asset_id);
+         req_this.__transact([{
+            account: req_this.mainCollection,
+            name: "unstake",
+            authorization: [{
+                actor: req_this.name,
+                permission: "active"
+            }],
+            data: {
+                asset_owner: req_this.name,
+                asset_id: asset_id
+            }
+        }]);
      },
      "getItemsByTemplate": function(template_id) {
          req_this.getItemsByTemplate(template_id);
@@ -1143,7 +1250,12 @@
                  for (var i = 0; i < sell_item_buttons.length; i++) {
                      sell_item_buttons[i].onclick = (function(k) {
                          return function() {
-                             req_this.exchangeRewards(sell_item_buttons[k].getAttribute("asset_id")).then(function(ares) {
+                            if(sell_item_buttons[k].value = "sell..."){
+                                sell_item_buttons[k].value = 'sell.';
+                            }else{
+                                sell_item_buttons[k].value += '.';
+                            }
+                            req_api.exchangeRewards(sell_item_buttons[k].getAttribute("asset_id"), function(ares = {}) {
                                  if (ares.transaction_id != undefined && ares.transaction_id != "") {
                                      sell_item_buttons[k].parentNode.append("sell out");
                                      sell_item_buttons[k].style.display = "none";
@@ -1236,6 +1348,83 @@
             }
         });
      },
+     "fenhua_food" : function(){
+        var barley_count = parseInt($(".fenhua_food_count").val());
+        var to_name_obj = {//接收分发食物的账号列表
+            "xhgk2.c.wam" : 1.5,
+            ".mgk2.c.wam" : 1.5,
+            "azxzw.wam" : 1,
+            "3tgka.c.wam" : 1.5,
+            "z1fka.c.wam" : 1.5,
+            "mhgka.c.wam" : 1.5,
+            "jnxzw.wam" : 1,
+            "bjpje.wam" : 1,
+            "p4vkc.c.wam" : 1.5,
+            "ii5.c.c.wam" : 1.5,
+            "25hzu.wam" : 1.5,
+            "wyx.e.c.wam" : 1.5,
+            "xe4kg.c.wam" : 1.5,
+            "lu3kg.c.wam" : 1.5,
+            "4a5.g.c.wam" : 1.5,
+            "trgkg.c.wam" : 1.5
+        };
+        var limit_c = 6;
+        var coin_obj = [{
+            name: "FWF",
+            value: barley_count
+        }];
+        var to_name_arr = [];
+        for(var k in to_name_obj){
+            to_name_arr.push(k);
+        }
+        function send_food_to_name(index){
+            if(index < to_name_arr.length){
+                if(to_name_obj[to_name_arr[index]] != undefined){
+                    coin_obj[0].value = barley_count * to_name_obj[to_name_arr[index]];
+                    var c = coin_obj.map(function(e) {
+                        return "".concat(parseFloat(e.value).toFixed(4), " ").concat(e.name)
+                    });
+                    var t = [{
+                        account: req_this.mintCollection,
+                        name: "transfers",
+                        authorization: [{
+                            actor: req_this.name,
+                            permission: "active"
+                        }],
+                        data: {
+                            from: req_this.name,
+                            to: to_name_arr[index],
+                            quantities: c,
+                            memo: ""
+                        }
+                    }];
+                    req_this.__transact(t).then(function(res){
+                        if (res.transaction_id != undefined && res.transaction_id != "") {
+                            delete to_name_obj[to_name_arr[index]];
+                            send_food_to_name(index+1);
+                            data_fun.show_text("第"+(index+1)+"次，分发食物：【" + c.join(" || ") + "】到【" + to_name_arr[index] + "】成功！");
+                        }else{
+                            data_fun.show_text("第"+(index+1)+"次，分发食物：【" + c.join(" || ") + "】到【" + to_name_arr[index] + "】失败！");
+                            if(limit_c>=0){
+                                limit_c--;
+                                send_food_to_name(index);
+                            }else{
+                                send_food_to_name(index+1);
+                            }
+                        }
+                    }).catch(function(res){
+                        if(limit_c>=0){
+                            limit_c--;
+                            send_food_to_name(index);
+                        }else{
+                            send_food_to_name(index+1);
+                        }
+                    });
+                }
+            }
+        }
+        send_food_to_name(0);
+     },
      "send_Coin" : function(to_name, coin_obj, meno_str){
          /*
         var c = [{
@@ -1258,10 +1447,10 @@
             return "".concat(parseFloat(e.value).toFixed(4), " ").concat(e.name)
         }));
         var t = [{
-            account: to_name,
+            account: req_this.mintCollection,
             name: "transfers",
             authorization: [{
-                actor: this.name,
+                actor: req_this.name,
                 permission: "active"
             }],
             data: {
@@ -1278,7 +1467,30 @@
                 data_fun.show_text("交易代币：【" + c.join(" || ") + "】到【" + to_name + "】失败！");
             }
         });
+     },
+     "change_server" : {
+         "select_server" : function(addr){
+            select_server = addr;
+            $(".cur_server_addr").text(select_server);
+            req_this.server = select_server;
+            req_this.rpc.endpoint = select_server;
+            //e.next = (select_server != "" ? (this.server = select_server, this.rpc.endpoint = this.server, 2) : 2),
+         },
+         "auto_server" : function(){
+            var ccount = zq_diy_servers.length;
+            function get_new_server(){
+                var rand_index = Math.floor(Math.random()*ccount);
+                if(zq_diy_servers[rand_index] == req_this.server){
+                    get_new_server();
+                }else{
+                    error_req_count = 0;//当请求出现指定次数错误时，调动该方法切换服务器
+                    req_api.change_server.select_server(zq_diy_servers[rand_index]);
+                }
+            };
+            get_new_server();
+         },
      }
+     
  };
  function sub_diy_event(){
     if(localStorage.token_time != undefined){
@@ -1311,6 +1523,7 @@ var test_asset_ids = ["1099593114113","1099593114114"];
              $("#zq_kuozhan_div").css("z-index", "9991");
              $("#zq_info_show").css("height", "520px");
              $(".zq_kuozhan_kuozhan_area").css("display", "");
+             $(".cur_server_addr").text(req_this.server);
              $(".zq_zhiding_area").val("收起配置");
          } else {
              $(".zq_kuozhan_kuozhan_area").css("display", "none");
@@ -1335,13 +1548,20 @@ var test_asset_ids = ["1099593114113","1099593114114"];
          }
          var req_canshu1 = $(".delHistory").val();
          var req_canshu2 = $(".clearHistory").val();
+         var req_way_arr = ["unstake", "marketBuy", "withdraw"];
+         var req_new_this;
+         if(req_way_arr.indexOf(req_way) == -1){
+            req_new_this = req_this;
+         }else{
+            req_new_this = req_api;
+         }
          if (req_canshu1 == "") {
-             req_this[req_way]();
+            req_new_this[req_way]();
          } else {
              if (req_canshu2 == "") {
-                 req_this[req_way](req_canshu1);
+                req_new_this[req_way](req_canshu1);
              } else {
-                 req_this[req_way](req_canshu1, req_canshu2);
+                req_new_this[req_way](req_canshu1, req_canshu2);
              }
          }
      });
@@ -1353,22 +1573,26 @@ var test_asset_ids = ["1099593114113","1099593114114"];
     });
      $(".zq_check_build").click(function() {
         limit_req = parseInt($(".req_limit_count").val());
+        repeat_req = {};
         data_fun.get_conf();
          req_api.buildings.check();
          //$(".modal-wrapper").css("z-index","0");隐藏登录遮罩
      });
      $(".zq_check_mining").click(function() {
         limit_req = parseInt($(".req_limit_count").val());
+        repeat_req = {};
         data_fun.get_conf();
          req_api.tools.check();
      });
      $(".zq_check_animals").click(function() {
         limit_req = parseInt($(".req_limit_count").val());
+        repeat_req = {};
         data_fun.get_conf();
          req_api.animals.check();
      });
      $(".zq_check_crops").click(function() {
         limit_req = parseInt($(".req_limit_count").val());
+        repeat_req = {};
         data_fun.get_conf();
          req_api.crops.check();
      });
@@ -1377,20 +1601,24 @@ var test_asset_ids = ["1099593114113","1099593114114"];
      });
      $(".zq_check_fee").click(function() {
         limit_req = parseInt($(".req_limit_count").val());
+        repeat_req = {};
          req_api.config.check();
      });
      $(".zq_check_repair").click(function() {
         limit_req = parseInt($(".req_limit_count").val());
+        repeat_req = {};
         data_fun.get_conf();
          req_api.tools.check(0.99);
      });
      $(".zq_check_health").click(function() {
         limit_req = parseInt($(".req_limit_count").val());
+        repeat_req = {};
         data_fun.get_conf();
          req_api.accounts.check(9999);
      });
      $(".zq_load_data").click(function() {
         limit_req = parseInt($(".req_limit_count").val());
+        repeat_req = {};
         data_fun.get_conf();
          req_api.tools.list();
          req_api.crops.list();
@@ -1520,16 +1748,15 @@ var test_asset_ids = ["1099593114113","1099593114114"];
         }
     });
     $(".fenhua_food").click(function() {
+        req_api.fenhua_food();
+        /*
+        var to_names1 = ["azxzw.wam", "jnxzw.wam", "bjpje.wam"];
         var coin_obj1 = [{
             name: "FWF",
-            value: 300
+            value: barley_count
         }];
-        var coin_obj2 = [{
-            name: "FWF",
-            value: 450
-        }];
-        var to_names = ["xhgk2.c.wam"];
-        req_api.send_Coin(to_names[0], coin_obj1, "");
+        req_api.send_Coin(to_names1[0], coin_obj1, "");
+        */
     });
     $(".receive_textarea").change(function(){
         var cur_text = $(".receive_textarea").val();
@@ -1556,7 +1783,20 @@ var test_asset_ids = ["1099593114113","1099593114114"];
                 }
             }
         }
-    })
+    });
+    $(".zq_change_server").click(function() {
+        req_api.change_server.select_server($("#user_select_server_addr option:selected").val());
+     });
+     $(".send_food_btn").click(function() {
+        var food_count = parseInt($(".fenhua_food_count").val());
+        var receive_addr = $(".receive_food_addr").val();
+        if(receive_addr != "" && food_count > 0){
+            req_api.send_Coin(receive_addr,[{
+                name: "FWF",
+                value: food_count
+            }], "");
+        }
+    });
  };
  function add_diy_event() {
      sub_diy_event();
@@ -1582,7 +1822,6 @@ var test_asset_ids = ["1099593114113","1099593114114"];
          //req_this.aapi.endpoint = "https://atomic.wax.io";
          document.title = account_info.accounts[0].account;
          limit_req = parseInt($(".req_limit_count").val());
- 
          function old_banben() {
              var stime = 0,
                  ftime = 0;
@@ -1610,6 +1849,13 @@ var test_asset_ids = ["1099593114113","1099593114114"];
                      map_check_obj[map_checks[i].value] = function() {};
                  }
              }
+             function clear_repeat_req(c_time){
+                for(var k in repeat_req){
+                    if(c_time - repeat_req[k] >= 30000){//超过30秒，解除请求限制
+                        delete repeat_req[k];
+                    }
+                }
+            }
              function clock_check() {
                  stime++;
                  ftime++;
@@ -1620,17 +1866,17 @@ var test_asset_ids = ["1099593114113","1099593114114"];
                      nextTime = 0;
                  };
                  data_fun.get_balance();
+                 clear_repeat_req(cur_time);
                  $(".zq_start_pos").val(get_time_format(cur_time, 1).join(":") + " → " + limit_req);
-                 if (ftime % 120 == 6) {
-                     map_check_obj.config();
-                     //req_api.config.check();
-                 }
                  if (ftime % 1200 == 777) {//每20分钟从服务器获取一次信息，否则使用本地时间计算
                     req_api.tools.check(new_repair);
                     req_api.crops.check();
                     req_api.animals.check();
                     req_api.mbs.check();
                     map_check_obj.auto_add_food();
+                }
+                if (ftime % 120 == 6) {
+                    map_check_obj.config();
                 }
                  if (ftime % 90 == 11) {
                      map_check_obj.auto_check_Items();
@@ -1640,43 +1886,39 @@ var test_asset_ids = ["1099593114113","1099593114114"];
                         "time" : cur_time,
                         "data" : {
                             "accounts" : account_info.accounts,
-                            "animals" : account_info.animals,
                             "template_ids" : data_fun.template_ids,
                             "buildings" : account_info.buildings,
                             "tools" : account_info.tools,
                             "crops" : account_info.crops,
                             "mbs" : account_info.mbs,
+                            "animals" : account_info.animals,
+                            "items" : account_info.items.result,
+                            "server" : req_this.server
                         }
                     };
                     localStorage.account_info = JSON.stringify(a_data);
-                    if(r_limit_count.checked){
+                    if(r_limit_count.checked){//默认每60秒限制请求次数不超过2次
                         limit_req = parseInt($(".req_limit_count").val());
                      }else{
-                        limit_req = 99;
+                        limit_req = 9;
                      }
                  }
-                 if (stime % 15 == 3) {
+                 if (ftime % 15 == 1) {
                     map_check_obj.accounts(new_energy);
-                     //req_api.tools.check();
                  }
-                 if (stime % 15 == 6) {
+                 if (stime % 5 == 2) {
                      map_check_obj.tools(new_repair);
                      map_check_obj.auto_plot_crops();
-                     //req_api.accounts.check(360);
                  }
-                 if (stime % 15 == 9) {
+                 if (stime % 5 == 3) {
                     map_check_obj.crops();
-                     //req_api.accounts.check(300);
                  }
-                 if (stime % 15 == 12) {
+                 if (stime % 5 == 4) {
                      map_check_obj.animals();
                      map_check_obj.mbs();
                      map_check_obj.buildings();
-                     //req_api.buildings.check();
-                     //req_api.animals.check();
-                     //req_api.mbs.check();
                  }
-                 if (stime >= 15) {
+                 if (stime >= 5) {
                      stime = 0;
                  }
                  if (ftime >= 36000000) {
@@ -2035,7 +2277,7 @@ var test_asset_ids = ["1099593114113","1099593114114"];
                                 for (; ; )
                                     switch (e.prev = e.next) {
                                     case 0:
-                                        return e.next = 2,
+                                        return e.next = 2, req_this = this,
                                         this.rpc.get_currency_balance(this.mintCollection, this.name);
                                     case 2:
                                         return e.abrupt("return", e.sent);
@@ -2060,7 +2302,7 @@ var test_asset_ids = ["1099593114113","1099593114114"];
                                 for (; ; )
                                     switch (e.prev = e.next) {
                                     case 0:
-                                        return e.next = 2, req_this=this,
+                                        return e.next = 2,
                                         this.__getTableRows({
                                             code: this.mainCollection,
                                             scope: this.mainCollection,
@@ -2215,7 +2457,7 @@ var test_asset_ids = ["1099593114113","1099593114114"];
                                         e.next = 3,
                                         this.__transact(t);
                                     case 3:
-                                        return account_info.res = e.sent, e.abrupt("return", e.sent);
+                                        return account_info.res = e.sent, console.log(a, e.sent), e.abrupt("return", e.sent);
                                     case 4:
                                     case "end":
                                         return e.stop()
@@ -4677,7 +4919,7 @@ var test_asset_ids = ["1099593114113","1099593114114"];
                                 for (; ; )
                                     switch (e.prev = e.next) {
                                     case 0:
-                                        return e.next = 2,
+                                        return e.next = (select_server != "" ? (this.server = select_server, this.rpc.endpoint = this.server, 2) : 2),
                                         this.rpc.get_table_rows(Object(n.a)(Object(n.a)({
                                             json: !0
                                         }, a), {}, {
@@ -5423,10 +5665,11 @@ var test_asset_ids = ["1099593114113","1099593114114"];
                 }
                 )).addCase(B.fulfilled, (function(e, a) {
                     e.status = "succeeded",
-                    a.payload.forEach((function(a) {
+                    e.servers = zq_diy_servers,
+                 /*   a.payload.forEach((function(a) {
                         e.servers.push(a.server)
                     }
-                    )),
+                    )),*/
                     e.selectedServer = e.servers[0]
                 }
                 )).addCase(B.rejected, (function(e, a) {
